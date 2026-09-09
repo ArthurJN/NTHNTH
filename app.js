@@ -114,6 +114,7 @@ function createCard(note) {
   card.draggable = true;
   card.dataset.id = note.id;
   card.innerHTML = `
+    ${author === "Alice" ? `<span class="alice-garden" aria-hidden="true"><span>🌸</span><span>🍃</span><span>🌺</span><span>🌿</span><span>🌼</span><span>🌷</span><span>✿</span><span>❀</span><span>🌸</span><span>🍃</span></span>` : ""}
     <div class="note-top">
       <span class="grip" aria-hidden="true">⋮⋮</span>
       <h3></h3>
@@ -126,7 +127,6 @@ function createCard(note) {
         <span class="chip ${note.column}">${note.column === "need" ? "Need" : "Nice"}</span>
         <span class="chip ${author.toLowerCase()}">${author}</span>
       </span>
-      ${author === "Alice" ? `<span class="alice-garden" aria-hidden="true"><span>🌸</span><span>✿</span><span>🌷</span><span>🌼</span></span>` : ""}
       <span class="importance" data-level="${normalizeImportance(note.importance)}" title="Importance ${normalizeImportance(note.importance)} of 5">
         <span class="pips">${pipsHtml(normalizeImportance(note.importance))}</span>
         ${normalizeImportance(note.importance)}/5
