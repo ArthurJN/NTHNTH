@@ -109,7 +109,8 @@ function render() {
 
 function createCard(note) {
   const card = document.createElement("article");
-  card.className = "note";
+  const author = normalizeAuthor(note.author);
+  card.className = author === "Alice" ? "note alice" : "note";
   card.draggable = true;
   card.dataset.id = note.id;
   card.innerHTML = `
@@ -123,8 +124,9 @@ function createCard(note) {
     <div class="note-meta">
       <span class="meta-left">
         <span class="chip ${note.column}">${note.column === "need" ? "Need" : "Nice"}</span>
-        <span class="chip ${normalizeAuthor(note.author).toLowerCase()}">${normalizeAuthor(note.author)}</span>
+        <span class="chip ${author.toLowerCase()}">${author}</span>
       </span>
+      ${author === "Alice" ? `<span class="alice-garden" aria-hidden="true"><span>🌸</span><span>✿</span><span>🌷</span><span>🌼</span></span>` : ""}
       <span class="importance" data-level="${normalizeImportance(note.importance)}" title="Importance ${normalizeImportance(note.importance)} of 5">
         <span class="pips">${pipsHtml(normalizeImportance(note.importance))}</span>
         ${normalizeImportance(note.importance)}/5
@@ -232,6 +234,7 @@ function openModal(note, column = "need") {
   const author = normalizeAuthor(note?.author ?? lastAuthor);
   const authorRadio = form.querySelector(`input[name="author"][value="${author}"]`);
   if (authorRadio) authorRadio.checked = true;
+  syncAuthorSwitch(false);
   modal.showModal();
   titleInput.focus();
 }
@@ -279,6 +282,48 @@ document.getElementById("cancel-note").addEventListener("click", closeModal);
 document.querySelectorAll("[data-add]").forEach((button) => {
   button.addEventListener("click", () => openModal(null, button.dataset.add));
 });
+
+document.querySelectorAll('input[name="author"]').forEach((input) => {
+  input.addEventListener("change", () => {
+    syncAuthorSwitch(input.value === "Alice");
+  });
+});
+
+function syncAuthorSwitch(animate) {
+  const switchEl = document.getElementById("author-switch");
+  const burst = document.getElementById("alice-burst");
+  const alice = form.querySelector('input[name="author"]:checked')?.value === "Alice";
+  switchEl.classList.toggle("alice-selected", alice);
+  modal.classList.toggle("alice-theme", alice);
+  if (!alice) burst.replaceChildren();
+  if (animate && alice) {
+    bloomAlice(switchEl.querySelector('label:has(input[value="Alice"])') || switchEl);
+  }
+}
+
+function bloomAlice(origin) {
+  if (!origin) return;
+  const layer = document.getElementById("alice-burst");
+  layer.replaceChildren();
+  const originRect = origin.getBoundingClientRect();
+  const layerRect = layer.getBoundingClientRect();
+  const x = originRect.left + originRect.width / 2 - layerRect.left;
+  const y = originRect.top + originRect.height / 2 - layerRect.top;
+  const flowers = ["🌸", "✿", "🌺", "🌼", "🌷", "❀"];
+  for (let i = 0; i < 18; i += 1) {
+    const petal = document.createElement("span");
+    petal.className = "alice-petal";
+    petal.textContent = flowers[i % flowers.length];
+    petal.style.left = `${x}px`;
+    petal.style.top = `${y}px`;
+    petal.style.setProperty("--dx", `${(Math.random() - 0.5) * 560}px`);
+    petal.style.setProperty("--dy", `${(Math.random() - 0.72) * 480}px`);
+    petal.style.setProperty("--rot", `${(Math.random() - 0.5) * 90}deg`);
+    petal.style.setProperty("--delay", `${i * 18}ms`);
+    layer.append(petal);
+    setTimeout(() => petal.remove(), 1300);
+  }
+}
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();

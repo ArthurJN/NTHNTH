@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=8" />
+    <link rel="stylesheet" href="styles.css?v=19" />
   </head>
   <body>
     <div class="app">
@@ -104,7 +104,7 @@
         </fieldset>
         <fieldset class="importance-picker">
           <legend>Who made this</legend>
-          <div class="importance-options author-options">
+          <div class="importance-options author-options" id="author-switch">
             <label><input type="radio" name="author" value="Arthur" checked /> Arthur</label>
             <label><input type="radio" name="author" value="Alice" /> Alice</label>
           </div>
@@ -125,8 +125,9 @@
           <button type="submit" class="btn primary" id="save-note">Save note</button>
         </div>
       </form>
+      <div class="alice-burst" id="alice-burst" aria-hidden="true"></div>
     </dialog>
 
-    <script src="app.js?v=8"></script>
+    <script src="app.js?v=18"></script>
   </body>
 </html>
